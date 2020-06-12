@@ -1,0 +1,28 @@
+.out {
+    background: #4CAF50;
+    display: relative;
+    color: white;
+    text-align: center;
+    padding: 35px;
+    display: inline-block;
+  }
+  
+  .in {
+    text-align: center;
+    margin-top: 25px;
+    border: 1px solid #ffffff;
+    padding: 15px;
+    display: inline-block
+  }
+  
+  .strong-text {
+    font-weight: bold;
+  }
+  
+  .t-16 {
+    font-size: 16px;
+  }
+  
+  .t-24 {
+    font-size: 24px;
+  }

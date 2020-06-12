@@ -1,0 +1,40 @@
+.centered-container {
+  position: relative;
+  align-content: center;
+}
+.login-container {
+  margin: 100px auto 0 auto;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  background: #000000;
+  max-width: 70%;
+}
+.form-class {
+  color: white;
+  flex: 1;
+}
+.image-class {
+  position: relative;
+  flex: 2;
+}
+
+form
+{
+  padding: 50px;
+	text-align: center;  
+}
+
+#submitbutton {
+	background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 10px 5px;
+  cursor: pointer;
+  width: 170px
+}
