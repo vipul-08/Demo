@@ -55,14 +55,15 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
 
   Future<void> _addDayPreference() async {
     String? selectedDay;
+  
     await showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text("Add Day Preference"),
-          content: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              return DropdownButton<String>(
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text("Add Day Preference"),
+              content: DropdownButton<String>(
                 hint: const Text("Select a day"),
                 isExpanded: true,
                 value: selectedDay,
@@ -78,26 +79,26 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
                     selectedDay = val;
                   });
                 },
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: selectedDay == null
-                  ? null
-                  : () {
-                      setState(() {
-                        dayWisePrefs.putIfAbsent(selectedDay!, () => []);
-                      });
-                      Navigator.pop(context);
-                    },
-              child: const Text("Add"),
-            ),
-          ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: selectedDay == null
+                      ? null
+                      : () {
+                          setState(() {
+                            dayWisePrefs.putIfAbsent(selectedDay!, () => []);
+                          });
+                          Navigator.pop(context);
+                        },
+                  child: const Text("Add"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
