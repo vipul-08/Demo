@@ -12,7 +12,13 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
   // --- Data Structures ---
   final List<String> allShifts = ['Morning', 'Day', 'Night'];
   final List<String> weekDays = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
   ];
 
   List<String> generalPrefs = [];
@@ -47,8 +53,57 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
     }
   }
 
+  Future<void> _addDayPreference() async {
+    String? selectedDay;
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Add Day Preference"),
+          content: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return DropdownButton<String>(
+                hint: const Text("Select a day"),
+                isExpanded: true,
+                value: selectedDay,
+                items: weekDays
+                    .where((d) => !dayWisePrefs.keys.contains(d))
+                    .map((day) => DropdownMenuItem(
+                          value: day,
+                          child: Text(day),
+                        ))
+                    .toList(),
+                onChanged: (val) {
+                  setStateDialog(() {
+                    selectedDay = val;
+                  });
+                },
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: selectedDay == null
+                  ? null
+                  : () {
+                      setState(() {
+                        dayWisePrefs.putIfAbsent(selectedDay!, () => []);
+                      });
+                      Navigator.pop(context);
+                    },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _savePreferences() {
-    // Example: print to console or send to backend
     debugPrint('General: $generalPrefs');
     debugPrint('Day-wise: $dayWisePrefs');
     debugPrint('Date-wise: $dateWisePrefs');
@@ -67,32 +122,64 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1️⃣ General Preferences
-            const Text("General Shift Preference", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text("General Shift Preference",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ...allShifts.map((shift) => CheckboxListTile(
-              title: Text(shift),
-              value: generalPrefs.contains(shift),
-              onChanged: (_) => _toggleShift(generalPrefs, shift),
-            )),
+                  title: Text(shift),
+                  value: generalPrefs.contains(shift),
+                  onChanged: (_) => _toggleShift(generalPrefs, shift),
+                )),
 
             const Divider(height: 32),
 
             // 2️⃣ Day-wise Preferences
-            const Text("Day-wise Shift Preference", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Day-wise Shift Preference",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                TextButton.icon(
+                  onPressed: _addDayPreference,
+                  icon: const Icon(Icons.add),
+                  label: const Text("Add Day"),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
-            ...weekDays.map((day) => ExpansionTile(
-              title: Text(day),
-              children: allShifts.map((shift) => CheckboxListTile(
-                title: Text(shift),
-                value: dayWisePrefs[day]?.contains(shift) ?? false,
-                onChanged: (_) {
-                  setState(() {
-                    dayWisePrefs.putIfAbsent(day, () => []);
-                    _toggleShift(dayWisePrefs[day]!, shift);
-                  });
-                },
-              )).toList(),
-            )),
+            if (dayWisePrefs.isEmpty)
+              const Text("No days added yet",
+                  style: TextStyle(color: Colors.grey)),
+            ...dayWisePrefs.entries.map((entry) => Card(
+                  child: ExpansionTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(entry.key),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              dayWisePrefs.remove(entry.key);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    children: allShifts
+                        .map((shift) => CheckboxListTile(
+                              title: Text(shift),
+                              value: entry.value.contains(shift),
+                              onChanged: (_) {
+                                setState(() {
+                                  _toggleShift(entry.value, shift);
+                                });
+                              },
+                            ))
+                        .toList(),
+                  ),
+                )),
 
             const Divider(height: 32),
 
@@ -100,7 +187,9 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Date-wise Shift Preference", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text("Date-wise Shift Preference",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 TextButton.icon(
                   onPressed: _addDatePreference,
                   icon: const Icon(Icons.add),
@@ -109,20 +198,38 @@ class _ShiftPreferencePageState extends State<ShiftPreferencePage> {
               ],
             ),
             const SizedBox(height: 8),
+            if (dateWisePrefs.isEmpty)
+              const Text("No dates added yet",
+                  style: TextStyle(color: Colors.grey)),
             ...dateWisePrefs.entries.map((entry) => Card(
-              child: ExpansionTile(
-                title: Text(entry.key),
-                children: allShifts.map((shift) => CheckboxListTile(
-                  title: Text(shift),
-                  value: entry.value.contains(shift),
-                  onChanged: (_) {
-                    setState(() {
-                      _toggleShift(entry.value, shift);
-                    });
-                  },
-                )).toList(),
-              ),
-            )),
+                  child: ExpansionTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(entry.key),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              dateWisePrefs.remove(entry.key);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    children: allShifts
+                        .map((shift) => CheckboxListTile(
+                              title: Text(shift),
+                              value: entry.value.contains(shift),
+                              onChanged: (_) {
+                                setState(() {
+                                  _toggleShift(entry.value, shift);
+                                });
+                              },
+                            ))
+                        .toList(),
+                  ),
+                )),
 
             const SizedBox(height: 20),
 
