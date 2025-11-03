@@ -1,39 +1,24 @@
-// mailer.js
-const nodemailer = require('nodemailer');
+BRIEF OVERVIEW OF PROJECT
 
-/**
- * Send an email using Gmail SMTP.
- * @param {string} to - Recipient email address.
- * @param {string} subject - Email subject.
- * @param {string} text - Plain text content.
- * @param {string} html - Optional HTML content.
- */
-async function sendMail(to, subject, text, html = '') {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // from your .env
-        pass: process.env.EMAIL_PASS, // app password
-      },
-    });
+Our project is an AI-driven workforce management system that automates shift scheduling and leave management for large organizations. It allows employees to set shift preferences, request leaves, and receive instant responses through an integrated chatbot. Managers can easily review and approve requests while the system automatically generates optimized rosters and intelligently reallocates shifts when leaves occur. The application ensures balanced staffing, minimizes manual effort, and promotes real-time communication between managers and employees. By leveraging AI and automation, it enhances transparency, improves operational efficiency, and fosters a flexible, employee-centric work environment that aligns productivity with individual satisfaction.
 
-    const mailOptions = {
-      from: `"Your App" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      text,
-      html,
-    };
+PREREQUISITES
+- OLLAMA
+- LLM Model
+- Python
+- NodeJS
+- Flutter
+- Emulators
+- MySQL
+- MongoDB
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Mail sent to ${to}: ${info.messageId}`);
-    return info;
-  } catch (error) {
-    console.error('❌ Error sending mail:', error);
-    throw error;
-  }
-}
+INSTALLATION
+1. MCP Server
+2. Node Backend
+3. Flask Backend
+4. Flutter App
 
-// ✅ Export function
-module.exports = { sendMail };
+CONFIGURATION - In the node backend, env file is already uploaded. Using those information you can configure databases
+
+
+ACCESS URL - None
